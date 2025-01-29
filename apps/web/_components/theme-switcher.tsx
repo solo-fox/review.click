@@ -29,21 +29,17 @@ export default function ThemeSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size={"sm"}>
+        <Button variant="ghost" size={"sm"} className="p-4">
           {theme === "light" ? (
-            <Sun key="light" size={16} className={"text-muted-foreground"} />
+            <Sun key="light" size={16} />
           ) : theme === "dark" ? (
-            <Moon key="dark" size={16} className={"text-muted-foreground"} />
+            <Moon key="dark" size={16} />
           ) : (
-            <Laptop
-              key="system"
-              size={16}
-              className={"text-muted-foreground"}
-            />
+            <Laptop key="system" size={16} />
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-content" align="start">
+      <DropdownMenuContent>
         <DropdownMenuRadioGroup
           value={theme}
           onValueChange={(e) => setTheme(e)}

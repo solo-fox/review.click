@@ -1,3 +1,3 @@
-export default function Page() {
-  return <>ö</>;
-}
+import DashboardPage from "@/features/dashboard/components/page";
+
+export default DashboardPage;

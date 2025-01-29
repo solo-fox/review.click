@@ -1,30 +1,33 @@
-import { AppSidebar } from "./app-sidebar";
-import { Separator } from "@workspace/ui/components/separator";
+import Sidebar from "./sidebar";
+import Header from "./header";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@workspace/ui/components/sidebar";
-import DynamicBreadcrumbs from "./dynamic-breadcrumbs";
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import profileAction from "@/_actions/profile.action";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["profile"],
+    queryFn: profileAction,
+  });
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <DynamicBreadcrumbs />
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className="min-h-svh w-full bg-background flex">
+        <Sidebar />
+        <div className="flex flex-col w-full min-h-svh">
+          <Header />
+          {children}
+        </div>
+      </div>
+    </HydrationBoundary>
   );
 }

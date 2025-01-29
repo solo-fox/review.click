@@ -16,12 +16,7 @@ export default async function signInAction(user: SignInAction) {
     password: user.password,
   });
 
-  if (error) {
-    return encodedRedirect(routes.auth.signin, {
-      message: error.message,
-      type: "error",
-    });
-  }
+  if (error) throw error;
 
   return encodedRedirect(routes.protected.dashboard);
 }

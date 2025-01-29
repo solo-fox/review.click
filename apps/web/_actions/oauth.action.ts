@@ -14,14 +14,8 @@ export async function signInWithGitHub() {
     },
   });
 
-  if (error) {
-    return encodedRedirect(routes.auth.signup, {
-      message: error.message,
-      type: "error",
-    });
-  }
+  if (error) throw error;
 
-  if (data.url) {
-    return encodedRedirect(data?.url);
-  }
+  if (data?.url) encodedRedirect(data?.url);
+  else throw new Error("Try again later.");
 }

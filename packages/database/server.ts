@@ -1,5 +1,5 @@
 import { createServerClient, CookieOptions } from "@supabase/ssr";
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
 
 type CookieToSet = {
@@ -7,7 +7,7 @@ type CookieToSet = {
   value: string;
   options: CookieOptions;
 }[];
-export type ClientConnection = SupabaseClient<Database>
+export type ClientConnection = SupabaseClient<Database>;
 
 export default function Client({
   url,

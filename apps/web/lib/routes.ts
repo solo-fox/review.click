@@ -8,7 +8,6 @@ const routes = {
   auth: {
     signin: "/auth/signin",
     signup: "/auth/signup",
-    verify: "/auth/verify",
     onboarding: "/auth/onboarding",
   },
   protected: {

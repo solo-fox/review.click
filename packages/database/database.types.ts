@@ -11,24 +11,141 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          active: boolean | null;
+          banned: boolean | null;
           id: string;
-          onboarding_complete: boolean | null;
+          last_login: string | null;
+          notes: string | null;
           org_name: string | null;
+          plan: string;
         };
         Insert: {
-          active?: boolean | null;
+          banned?: boolean | null;
           id: string;
-          onboarding_complete?: boolean | null;
+          last_login?: string | null;
+          notes?: string | null;
           org_name?: string | null;
+          plan?: string;
         };
         Update: {
-          active?: boolean | null;
+          banned?: boolean | null;
           id?: string;
-          onboarding_complete?: boolean | null;
+          last_login?: string | null;
+          notes?: string | null;
           org_name?: string | null;
+          plan?: string;
         };
         Relationships: [];
+      };
+      project_metrics: {
+        Row: {
+          api_calls: number;
+          id: number;
+          project_id: string;
+          usage_date: string;
+        };
+        Insert: {
+          api_calls?: number;
+          id?: number;
+          project_id: string;
+          usage_date?: string;
+        };
+        Update: {
+          api_calls?: number;
+          id?: number;
+          project_id?: string;
+          usage_date?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "metrics_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: true;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      projects: {
+        Row: {
+          api_key: string;
+          api_limit: number;
+          api_requests: number;
+          created_at: string;
+          description: string | null;
+          id: string;
+          last_use: string;
+          logs: Json | null;
+          name: string;
+          restricted: boolean;
+          user_id: string;
+        };
+        Insert: {
+          api_key: string;
+          api_limit?: number;
+          api_requests?: number;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          last_use?: string;
+          logs?: Json | null;
+          name: string;
+          restricted?: boolean;
+          user_id: string;
+        };
+        Update: {
+          api_key?: string;
+          api_limit?: number;
+          api_requests?: number;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          last_use?: string;
+          logs?: Json | null;
+          name?: string;
+          restricted?: boolean;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reviews: {
+        Row: {
+          created_at: string;
+          id: number;
+          project_id: string;
+          review: number;
+          text: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          project_id: string;
+          review: number;
+          text: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          project_id?: string;
+          review?: number;
+          text?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reviews_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {

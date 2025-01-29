@@ -35,31 +35,10 @@ export const updateSession = async (request: NextRequest) => {
 
   // Handle unauthenticated users trying to access protected routes
   if (
-    (request.nextUrl.pathname.startsWith(routes.protected.dashboard) ||
-      request.nextUrl.pathname === routes.auth.verify) &&
+    request.nextUrl.pathname.startsWith(routes.protected.dashboard) ||
     user.error
   ) {
     return NextResponse.redirect(new URL(routes.auth.signin, request.url));
-  }
-
-  // Redirect unverified users to email verification
-  if (
-    request.nextUrl.pathname.startsWith(routes.protected.dashboard) &&
-    !user.error &&
-    user.data.user?.email_confirmed_at === null
-  ) {
-    return NextResponse.redirect(new URL(routes.auth.verify, request.url));
-  }
-
-  // Redirect verified users away from verification page
-  if (
-    request.nextUrl.pathname === routes.auth.verify &&
-    !user.error &&
-    user.data.user?.email_confirmed_at !== null
-  ) {
-    return NextResponse.redirect(
-      new URL(routes.protected.dashboard, request.url),
-    );
   }
 
   // Redirect authenticated users away from auth pages
@@ -71,25 +50,6 @@ export const updateSession = async (request: NextRequest) => {
     return NextResponse.redirect(
       new URL(routes.protected.dashboard, request.url),
     );
-  }
-
-  // Redirect users trying to access dashboard without an org_name
-  if (
-    request.nextUrl.pathname.startsWith(routes.protected.dashboard) &&
-    !user.error &&
-    user.data.user.id
-  ) {
-    const onboardingComplete = await supabase
-      .from("profiles")
-      .select("onboarding_complete")
-      .eq("id", user.data.user.id)
-      .single();
-
-    if (onboardingComplete.data?.onboarding_complete === false) {
-      return NextResponse.redirect(
-        new URL(routes.auth.onboarding, request.url),
-      );
-    }
   }
 
   return response;

@@ -6,25 +6,31 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@workspace/ui/components/alert";
-import { useQueryState } from "nuqs";
-export default function Alert() {
-  const [message] = useQueryState("message", { defaultValue: "" });
-  const [type] = useQueryState("type", { defaultValue: "success" });
 
-  if (message.length === 0) return null;
+interface AlertProps {
+  message: string;
+  isError: boolean;
+}
 
-  const isError = type === "error";
+export default function Alert({ message, isError }: AlertProps) {
+  if (!message) return null;
+
   const title = isError ? "Error" : "Success";
 
   return (
     <AlertUi variant={isError ? "destructive" : "default"}>
-      {isError ? (
-        <AlertCircle className="h-4 w-4" />
-      ) : (
-        <CheckCircle className="h-4 w-4" />
-      )}
-      <AlertTitle>{title}</AlertTitle>
-      <AlertDescription>{decodeURIComponent(message)}</AlertDescription>
+      <AlertTitle className="flex items-center gap-2">
+        {isError ? (
+          <AlertCircle className="size-4" />
+        ) : (
+          <CheckCircle className="size-4" />
+        )}{" "}
+        {title}
+      </AlertTitle>
+
+      <AlertDescription>
+        <p>{decodeURIComponent(message)}</p>
+      </AlertDescription>
     </AlertUi>
   );
 }

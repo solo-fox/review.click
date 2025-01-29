@@ -19,7 +19,11 @@ export async function createClient(): Promise<ClientConnection> {
         // The `set` method was called from a Server Component.
         // This can be ignored if you have middleware refreshing
         // user sessions.
+        console.log(
+          "[SERVER][ERR] Failed to set cookies for some reason \n",
+          error,
+        );
       }
     },
   });
-};
+}

@@ -1,7 +1,13 @@
 import { redirect } from "next/navigation";
-type SearchParamsObject = Record<string, string | number | boolean | null | undefined>;
+type SearchParamsObject = Record<
+  string,
+  string | number | boolean | null | undefined
+>;
 
-export function encodedRedirect(path: string, searchParams?: SearchParamsObject) {
+export function encodedRedirect(
+  path: string,
+  searchParams?: SearchParamsObject,
+) {
   // If no search params, just redirect to the path
   if (!searchParams || Object.keys(searchParams).length === 0) {
     return redirect(path);
@@ -20,13 +26,3 @@ export function encodedRedirect(path: string, searchParams?: SearchParamsObject)
   // Return redirect with path and encoded search params
   return redirect(`${path}?${params.toString()}`);
 }
-
-export function generateBreadcrumbs(path: string) {
-  const pathParts = path.split('/').filter(Boolean);
-  return pathParts.map((part, index) => {
-    const href = `/${pathParts.slice(0, index + 1).join('/')}`;
-    const label = part.charAt(0).toUpperCase() + part.slice(1).replace(/-/g, ' ');
-    return { href, label };
-  });
-}
-

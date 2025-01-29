@@ -4,11 +4,8 @@ import { z } from "zod";
 
 const authSchema = z
   .object({
-    email: z.string().email(),
+    email: z.string().email().trim(),
     password: z.string().min(8),
-    terms_accepted: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions",
-    }),
   })
   .required();
 

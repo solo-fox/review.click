@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import authSchema from "@/_schemas/auth.schema";
 import {
   Form,
@@ -20,7 +21,6 @@ import {
   CardDescription,
 } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
-import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 import signUpAction from "../actions/signup.action";
@@ -28,32 +28,28 @@ import LoadingIcon from "@/_components/loading-icon";
 import Alert from "@/_components/alert";
 import routes from "@/lib/routes";
 import OAuthButton from "@/_components/oauth-button";
-import {Checkbox} from "@workspace/ui/components/checkbox"
 
 export default function SignUpForm() {
-  const [pending, setPending] = useState<boolean>(false);
-
   const signUpForm = useForm<z.infer<typeof authSchema>>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
       password: "",
-      terms_accepted: false,
     },
   });
 
-  async function onSubmit(
-    values: z.infer<typeof authSchema>,
-    event?: React.BaseSyntheticEvent,
-  ) {
-    event?.preventDefault();
-    setPending(true);
-    await signUpAction({
-      email: values.email,
-      password: values.password,
-    });
-    setPending(false);
-  }
+  const {
+    mutate: signUp,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: signUpAction,
+  });
+
+  const onSubmit = (values: z.infer<typeof authSchema>) => {
+    signUp(values);
+  };
 
   return (
     <Card>
@@ -65,7 +61,10 @@ export default function SignUpForm() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-6 justify-center">
-        <Alert />
+        <Alert
+          message={(error as Error)?.message as string}
+          isError={isError}
+        />
         <Form {...signUpForm}>
           <form
             method="post"
@@ -109,27 +108,8 @@ export default function SignUpForm() {
               )}
             />
 
-            <FormField
-              control={signUpForm.control}
-              name="terms_accepted"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      By clicking sign up you accept our terms.
-                    </FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
-            <Button disabled={pending} className="w-full" type="submit">
-              {pending ? <LoadingIcon /> : ""} <p>Create a free account</p>
+            <Button disabled={isPending} className="w-full" type="submit">
+              {isPending ? <LoadingIcon /> : ""} <p>Create a free account</p>
             </Button>
           </form>
         </Form>

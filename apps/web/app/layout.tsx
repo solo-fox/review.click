@@ -2,11 +2,10 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@workspace/ui/components/toaster";
 import "@workspace/ui/styles/globals.css";
-import { NuqsAdapter } from "nuqs/adapters/react";
+import QueryProvider from "@/_components/query-provider";
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL as string),
-  title: "Review Hub",
+  title: "Reviewnow",
   description: "The fastest way to create reviews and beta previewing.",
 };
 
@@ -23,12 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground ">
-        <NuqsAdapter>
+        <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
             <Toaster />
           </ThemeProvider>
-        </NuqsAdapter>
+        </QueryProvider>
       </body>
     </html>
   );

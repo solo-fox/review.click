@@ -1,3 +1,5 @@
+import Footer from "@/_components/footer";
+
 export default function AuthLayou({
   children,
 }: Readonly<{
@@ -7,6 +9,7 @@ export default function AuthLayou({
     <div>
       <div className="dotted-background"></div>
       {children}
+      <Footer />
     </div>
   );
 }

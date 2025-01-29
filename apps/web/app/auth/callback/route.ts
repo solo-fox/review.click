@@ -8,26 +8,20 @@ export async function GET(request: Request) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next");
 
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      return encodedRedirect(`${routes.base}${routes.auth.signin}`, {
+      return encodedRedirect(`${routes.auth.signin}`, {
         message: error.message,
         type: "error",
       });
     }
 
-    // URL to redirect to after sign up process completes
-    if (!next) {
-      return encodedRedirect(`${routes.base}${routes.protected.dashboard}`);
-    }
-
-    return encodedRedirect(`${routes.base}${next}`);
+    return encodedRedirect(`${routes.protected.dashboard}`);
   } else {
-    return encodedRedirect(`${routes.base}${routes.auth.signin}`, {
+    return encodedRedirect(`${routes.auth.signin}`, {
       message: "No+authentiaction+code+was+found",
       type: "error",
     });

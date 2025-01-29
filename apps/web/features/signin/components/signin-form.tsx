@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
 import authSchema from "@/_schemas/auth.schema";
 import {
   Form,
@@ -20,7 +21,6 @@ import {
   CardDescription,
 } from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
-import { useState } from "react";
 import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
 import signInAction from "../actions/signin.action";
@@ -30,50 +30,49 @@ import routes from "@/lib/routes";
 import OAuthButton from "@/_components/oauth-button";
 
 export default function SignInForm() {
-  const [pending, setPending] = useState<boolean>(false);
-
-  const signInForm = useForm<z.infer<typeof authSchema>>({
+  const signUpForm = useForm<z.infer<typeof authSchema>>({
     resolver: zodResolver(authSchema),
     defaultValues: {
       email: "",
       password: "",
-      terms_accepted: true,
     },
   });
 
-  async function onSubmit(
-    values: z.infer<typeof authSchema>,
-    event?: React.BaseSyntheticEvent,
-  ) {
-    event?.preventDefault();
-    setPending(true);
-    await signInAction({
-      email: values.email,
-      password: values.password,
-    });
-    setPending(false);
-  }
+  const {
+    mutate: signIn,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: signInAction,
+  });
+
+  const onSubmit = (values: z.infer<typeof authSchema>) => {
+    signIn(values);
+  };
 
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">
-          Login to your account
-        </CardTitle>
+        <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
         <CardDescription className="text-balance text-sm">
-          Enter your email and password to login to your account
+          Enter your email and password to sign in a new account
         </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-6 justify-center">
-        <Alert />
-        <Form {...signInForm}>
+        <Alert
+          message={(error as Error)?.message as string}
+          isError={isError}
+        />
+        <Form {...signUpForm}>
           <form
-            onSubmit={signInForm.handleSubmit(onSubmit)}
+            method="post"
+            onSubmit={signUpForm.handleSubmit(onSubmit)}
             className="flex flex-col gap-6 justify-center"
           >
             <FormField
-              control={signInForm.control}
+              control={signUpForm.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -91,7 +90,7 @@ export default function SignInForm() {
             />
 
             <FormField
-              control={signInForm.control}
+              control={signUpForm.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
@@ -109,8 +108,8 @@ export default function SignInForm() {
               )}
             />
 
-            <Button disabled={pending} className="w-full" type="submit">
-              {pending ? <LoadingIcon /> : ""} <p>Login to your account</p>
+            <Button disabled={isPending} className="w-full" type="submit">
+              {isPending ? <LoadingIcon /> : ""} <p>Sign in to your account.</p>
             </Button>
           </form>
         </Form>
