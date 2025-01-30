@@ -5,8 +5,13 @@ import "@workspace/ui/styles/globals.css";
 import QueryProvider from "@/_components/query-provider";
 
 export const metadata = {
-  title: "Reviewnow",
-  description: "The fastest way to create reviews and beta previewing.",
+  title: {
+    default: "ReviewNow",
+    template: `%s | ReviewNow`,
+  },
+  description: "ReviewNow",
+  keywords: ["review", "now", "fast"],
+  robots: { index: true, follow: true }
 };
 
 const geistSans = Geist({
